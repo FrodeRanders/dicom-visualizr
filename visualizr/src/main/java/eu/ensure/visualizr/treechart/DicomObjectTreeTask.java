@@ -15,8 +15,8 @@ import de.chimos.ui.treechart.layout.TreePane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class TreeChartTask extends Task<TreeChartTask.DicomObjectTreeChart> {
-    private static final Logger log = LogManager.getLogger(TreeChartTask.class);
+public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTreeChart> {
+    private static final Logger log = LogManager.getLogger(DicomObjectTreeTask.class);
 
     public class DicomObjectTreeChart {
         private TreePane pane;
@@ -56,7 +56,7 @@ public class TreeChartTask extends Task<TreeChartTask.DicomObjectTreeChart> {
     private static final double X_SPACING = 80d;
     private static final double Y_SPACING = 100d;
 
-    public TreeChartTask(DicomFile dicomFile, VisualizrGuiController caller) {
+    public DicomObjectTreeTask(DicomFile dicomFile, VisualizrGuiController caller) {
         this.rootDicomFile = dicomFile;
         this.caller = caller;
     }
@@ -67,10 +67,10 @@ public class TreeChartTask extends Task<TreeChartTask.DicomObjectTreeChart> {
         Node element = null;
         try {
             log.debug("Putting " + dicomObject.getName() + " onto chart area");
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("TreeNode.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DicomObject.fxml"));
             element = fxmlLoader.load();
 
-            TreeNodeController elementController = fxmlLoader.<TreeNodeController>getController();
+            DicomObjectNodeController elementController = fxmlLoader.<DicomObjectNodeController>getController();
             elementController.setDicomObject(dicomObject);
             elementController.setParentController(caller);
 

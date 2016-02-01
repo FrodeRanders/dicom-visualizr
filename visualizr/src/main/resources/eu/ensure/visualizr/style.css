@@ -9,3 +9,7 @@
 .scroll-pane:focused {
     -fx-background-color: transparent, -fx-box-border, -fx-background;
 }
+
+.private-tag {
+    -fx-background-color: orange;
+}

@@ -238,17 +238,11 @@ public class DicomFile {
 
     private Type type = Type.Unknown;
     private final File dicomFile;
-    private final DicomFile parentFile;
     private final DicomObject rootObject;
 
     public DicomFile(DicomObject dicomObject, File dicomFile) {
-        this(dicomObject, dicomFile, null);
-    }
-
-    public DicomFile(DicomObject dicomObject, File dicomFile, DicomFile parentFile) {
         this.rootObject = dicomObject;
         this.dicomFile = dicomFile;
-        this.parentFile = parentFile;
 
         this.type = Type.find(dicomObject.getSopClassUID());
     }

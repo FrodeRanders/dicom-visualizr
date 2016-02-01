@@ -1,5 +1,6 @@
 package eu.ensure.visualizr.treechart;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,32 +14,31 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TitledPane;
-//import javafx.scene.control.Tooltip;
-//import javafx.scene.paint.Color;
-import javafx.scene.control.Tooltip;
-import javafx.scene.paint.Color;
-import javafx.util.Callback;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Popup;
+import javafx.stage.PopupWindow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
  * FXML Controller class
  *
- * @author Karl
  */
-public class TreeNodeController implements Initializable {
-    private static final Logger log = LogManager.getLogger(TreeNodeController.class);
+public class DicomObjectNodeController implements Initializable {
+    private static final Logger log = LogManager.getLogger(DicomObjectNodeController.class);
 
     @FXML
     public TitledPane titlePane;
+
     @FXML
-    public ListView tagList;
+    public TableView tagsTable;
 
     private DicomObject dicomObject;
     private ObservableList<DicomTag> observableTags;
@@ -51,32 +51,19 @@ public class TreeNodeController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         observableTags = FXCollections.observableArrayList();
-        tagList.setItems(observableTags);
-        tagList.setCellFactory(new Callback<ListView<DicomTag>, ListCell<DicomTag>>(){
-            @Override
-            public ListCell<DicomTag> call(ListView<DicomTag> p) {
-                final Tooltip tooltip = new Tooltip();
-                final ListCell<DicomTag> cell = new ListCell<DicomTag>() {
-                    @Override
-                    public void updateItem(DicomTag item, boolean empty){
-                        super.updateItem(item, empty);
-                        if(!empty){
-                            this.setText(item.getId() + " " + item.getDescription());
-                            if (item.isPrivate()) {
-                                this.setTextFill(Color.DARKRED);
-                            }
+        tagsTable.setItems(observableTags);
 
-                            //this.setUnderline(item.isStatic());
+        TableColumn<DicomTag, String> idColumn = new TableColumn<>("Id");
+        idColumn.setCellValueFactory(new PropertyValueFactory<DicomTag, String>("id"));
 
-                            tooltip.setText(item.getValue());
-                            this.setTooltip(tooltip);
-                            this.setCursor(Cursor.HAND);
-                        }
-                    }
-                };
-                return cell;
-            }
-        });
+        TableColumn<DicomTag, String> descriptionColumn = new TableColumn<>("Description");
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<DicomTag, String>("description"));
+
+        TableColumn<DicomTag, String> valueColumn = new TableColumn<>("Value");
+        valueColumn.setCellValueFactory(new PropertyValueFactory<DicomTag, String>("value"));
+
+        tagsTable.getColumns().setAll(idColumn, descriptionColumn, valueColumn);
+        tagsTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
         this.title = new SimpleStringProperty("");
         this.titlePre = new SimpleStringProperty("");
@@ -106,7 +93,7 @@ public class TreeNodeController implements Initializable {
             log.info(info, ex);
 
             this.observableTags.clear();
-            tagList.setDisable(true);
+            tagsTable.setDisable(true);
         }
     }
 
@@ -115,11 +102,14 @@ public class TreeNodeController implements Initializable {
     }
 
     public void setParentController(final VisualizrGuiController controller){
-        tagList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<DicomTag>() {
+        tagsTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<DicomTag>() {
             @Override
-            public void changed(ObservableValue observableObject, DicomTag oldValue, DicomTag newValue) {
-                // TODO
-                //controller.loadTreeChart(newValue.getType());
+            public void changed(ObservableValue observableObject, DicomTag oldSelection, DicomTag newSelection) {
+
+                if (null != newSelection) {
+                    DicomTagPopup popup = controller.getTagPopup();
+                    popup.show(newSelection);
+                }
             }
         });
     }

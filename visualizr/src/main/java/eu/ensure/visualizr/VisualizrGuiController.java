@@ -2,9 +2,10 @@ package eu.ensure.visualizr;
 
 import eu.ensure.visualizr.model.DicomFile;
 import eu.ensure.visualizr.model.DicomLoader;
-import eu.ensure.visualizr.treechart.TreeChartTask;
-import eu.ensure.visualizr.treeview.TreeNode;
-import eu.ensure.visualizr.treeview.TreeViewTask;
+import eu.ensure.visualizr.treechart.DicomObjectTreeTask;
+import eu.ensure.visualizr.treechart.DicomTagPopup;
+import eu.ensure.visualizr.treeview.DicomFileTreeNode;
+import eu.ensure.visualizr.treeview.DicomFileTreeViewTask;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,6 +13,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.print.*;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -24,10 +26,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +44,7 @@ public class VisualizrGuiController implements Initializable {
     private static final Logger log = LogManager.getLogger(VisualizrGuiController.class);
 
     private static final double ZOOM_MAX_SCALE = 1d;
-    private static final double ZOOM_MIN_SCALE = .5d;
+    private static final double ZOOM_MIN_SCALE = .1d;
     private static final double ZOOM_DELTA = .1d;
 
     @FXML
@@ -49,13 +53,13 @@ public class VisualizrGuiController implements Initializable {
     public TreeView fileList;
     @FXML
     public ScrollPane scrollPane;
-    @FXML
-    public ProgressBar progressBar;
+
     @FXML
     public Label bottomMessage;
     @FXML
     public HBox pathBox;
 
+    private DicomTagPopup tagPopup;
     private FileChooser fileChooser;
     private SimpleBooleanProperty loading;
 
@@ -79,7 +83,6 @@ public class VisualizrGuiController implements Initializable {
         unloadTreeChart();
 
         DicomLoaderTask loaderBuilder = new DicomLoaderTask(dicomdir);
-        progressBar.progressProperty().bind(loaderBuilder.progressProperty());
         loaderBuilder.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent t) {
@@ -91,10 +94,10 @@ public class VisualizrGuiController implements Initializable {
                     new Alert(Alert.AlertType.WARNING, "Incomplete loading", ButtonType.OK).showAndWait();
                 }
 
-                TreeViewTask accordionBuilder = new TreeViewTask(loader.getFiles(), loader.getFileName());
+                DicomFileTreeViewTask accordionBuilder = new DicomFileTreeViewTask(loader.getFiles(), loader.getFileName());
                 accordionBuilder.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                     public void handle(WorkerStateEvent t) {
-                        TreeItem<TreeNode> root = (TreeItem<TreeNode>) t.getSource().getValue();
+                        TreeItem<DicomFileTreeNode> root = (TreeItem<DicomFileTreeNode>) t.getSource().getValue();
                         fileList.setRoot(root);
 
                         loading.set(false);
@@ -107,7 +110,6 @@ public class VisualizrGuiController implements Initializable {
                         bottomMessage.setText("Could not create list of packages.");
                         new Alert(Alert.AlertType.ERROR, "Could not create list of packages", ButtonType.OK).showAndWait();
 
-                        progressBar.setProgress(1d);
                         loading.set(false);
                     }
                 });
@@ -116,7 +118,6 @@ public class VisualizrGuiController implements Initializable {
         });
         loaderBuilder.setOnFailed(new EventHandler<WorkerStateEvent>() {
             public void handle(WorkerStateEvent t) {
-                progressBar.setProgress(1d);
                 loading.set(false);
             }
         });
@@ -150,14 +151,17 @@ public class VisualizrGuiController implements Initializable {
         scrollPane.setScaleX(1d);
         scrollPane.setScaleY(1d);
         scrollPane.setScaleZ(1d);
+        scrollPane.setPannable(true);
 
         fileList.disableProperty().bind(this.loading);
         fileList.setShowRoot(false);
-        fileList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<TreeNode>>() {
+        fileList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<DicomFileTreeNode>>() {
             @Override
-            public void changed(ObservableValue<? extends TreeItem<TreeNode>> observable, TreeItem<TreeNode> oldValue, TreeItem<TreeNode> newValue) {
-                if (newValue != null){
-                    DicomFile dicomFile = newValue.getValue().getDicomFile();
+            public void changed(ObservableValue<? extends TreeItem<DicomFileTreeNode>> observable, TreeItem<DicomFileTreeNode> oldSelection, TreeItem<DicomFileTreeNode> newSelection) {
+                tagPopup.hide();
+
+                if (newSelection != null){
+                    DicomFile dicomFile = newSelection.getValue().getDicomFile();
                     if (null != dicomFile) {
                         loadTreeChart(dicomFile);
                     }
@@ -167,16 +171,16 @@ public class VisualizrGuiController implements Initializable {
                 }
             }
         });
-        fileList.setCellFactory(new Callback<TreeView<TreeNode>, TreeCell<TreeNode>>() {
+        fileList.setCellFactory(new Callback<TreeView<DicomFileTreeNode>, TreeCell<DicomFileTreeNode>>() {
             private Image folderImage = new Image(VisualizrGuiController.class.getResourceAsStream("folder.png"));
             private Image fileImage = new Image(VisualizrGuiController.class.getResourceAsStream("file.png"));
 
             @Override
-            public TreeCell<TreeNode> call(TreeView<TreeNode> p) {
+            public TreeCell<DicomFileTreeNode> call(TreeView<DicomFileTreeNode> p) {
                 final Tooltip tooltip = new Tooltip();
-                final TreeCell<TreeNode> cell = new TreeCell<TreeNode>() {
+                final TreeCell<DicomFileTreeNode> cell = new TreeCell<DicomFileTreeNode>() {
                     @Override
-                    public void updateItem(TreeNode item, boolean empty) {
+                    public void updateItem(DicomFileTreeNode item, boolean empty) {
                         super.updateItem(item, empty);
 
                         if (!empty) {
@@ -234,8 +238,8 @@ public class VisualizrGuiController implements Initializable {
 
         scrollPane.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>(){
             public void handle(ScrollEvent t) {
-                if (t.isControlDown()) {
-                    if(t.getDeltaY() > 0){
+                if (t.isShortcutDown()) {
+                    if(t.getDeltaY() > 0) {
                         handleZoomIn();
                     }
                     else{
@@ -255,6 +259,27 @@ public class VisualizrGuiController implements Initializable {
                 new FileChooser.ExtensionFilter("DICOMDIR", "DICOMDIR")
         );
 
+        try {
+            tagPopup = new DicomTagPopup(this);
+        } catch (IOException ioe) {
+            String info = "Failed to load and prepare DicomTagPopup: " + ioe.getMessage();
+            log.error(info);
+        }
+    }
+
+    public DicomTagPopup getTagPopup() {
+        return tagPopup;
+    }
+
+    @FXML
+    public void handlePrint() {
+        PrinterJob printerJob = PrinterJob.createPrinterJob();
+        Printer printer = printerJob.getPrinter();
+        PageLayout layout = printer.createPageLayout(Paper.A0, PageOrientation.LANDSCAPE, Printer.MarginType.DEFAULT);
+
+        if (printerJob.showPrintDialog(stage.getOwner()) && printerJob.printPage(layout, scrollPane)) {
+            printerJob.endJob();
+        }
     }
 
     @FXML
@@ -279,6 +304,8 @@ public class VisualizrGuiController implements Initializable {
             scale = ZOOM_MAX_SCALE;
         }
 
+        //scrollContent.setLayoutX(Math.signum(delta) * 100d);
+
         scrollContent.setScaleX(scale);
         scrollContent.setScaleY(scale);
     }
@@ -289,12 +316,11 @@ public class VisualizrGuiController implements Initializable {
         bottomMessage.setText("");
         unloadTreeChart();
 
-        TreeChartTask treeBuilder = new TreeChartTask(dicomFile, this);
-        progressBar.progressProperty().bind(treeBuilder.progressProperty());
+        DicomObjectTreeTask treeBuilder = new DicomObjectTreeTask(dicomFile, this);
         treeBuilder.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent t) {
-                TreeChartTask.DicomObjectTreeChart treeChart = (TreeChartTask.DicomObjectTreeChart) t.getSource().getValue();
+                DicomObjectTreeTask.DicomObjectTreeChart treeChart = (DicomObjectTreeTask.DicomObjectTreeChart) t.getSource().getValue();
 
                 scrollPane.setContent(treeChart.getTreePane());
                 bottomMessage.setTextFill(treeChart.getMessageColor());
@@ -315,7 +341,6 @@ public class VisualizrGuiController implements Initializable {
                 bottomMessage.setText("Tree construction error.");
                 new Alert(Alert.AlertType.WARNING, "Tree construction error.", ButtonType.OK).showAndWait();
 
-                progressBar.setProgress(1.0d);
                 loading.set(false);
             }
         });

@@ -4,26 +4,26 @@ import eu.ensure.visualizr.model.DicomFile;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.StringTokenizer;
+
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeItem;
 
 /**
  *
  */
-public class TreeViewTask extends Task<TreeItem<TreeNode>> {
-    private final List<DicomFile> files;
-    private final TreeItem<TreeNode> root;
+public class DicomFileTreeViewTask extends Task<TreeItem<DicomFileTreeNode>> {
 
-    public TreeViewTask(List<DicomFile> files, String rootName) {
+    private final List<DicomFile> files;
+    private final TreeItem<DicomFileTreeNode> root;
+
+    public DicomFileTreeViewTask(List<DicomFile> files, String rootName) {
         this.files = files;
-        this.root = new TreeItem<>(new TreeNode(rootName));
+        this.root = new TreeItem<>(new DicomFileTreeNode(rootName));
     }
 
     private void addItemToTree(DicomFile dicomFile) {
-        TreeItem<TreeNode> node = new TreeItem<TreeNode>(new TreeNode(dicomFile));
+        TreeItem<DicomFileTreeNode> node = new TreeItem<DicomFileTreeNode>(new DicomFileTreeNode(dicomFile));
 
         if (root.getChildren().size() > 0) {
             root.getChildren().get(0).getChildren().add(node);
@@ -33,7 +33,7 @@ public class TreeViewTask extends Task<TreeItem<TreeNode>> {
     }
 
     @Override
-    protected TreeItem<TreeNode> call() throws Exception {
+    protected TreeItem<DicomFileTreeNode> call() throws Exception {
         try{
             Collections.sort(this.files, new Comparator<DicomFile>() {
                 public int compare(DicomFile o1, DicomFile o2) {

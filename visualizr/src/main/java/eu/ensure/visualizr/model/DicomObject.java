@@ -25,7 +25,6 @@ public class DicomObject {
     public DicomObject(String name, Attributes attributes) {
         this.name = name;
         this.attributes = attributes;
-        populate(tags);
 
         String sopClassUID = sopClassUID(attributes);
         if (null == sopClassUID) {
@@ -36,6 +35,9 @@ public class DicomObject {
             DicomFile.Type type = DicomFile.Type.find(sopClassUID);
             heuristicName = type.getDescription();
         }
+
+        //
+        populate(tags);
     }
 
     public String getName() {
@@ -174,7 +176,7 @@ public class DicomObject {
                                     for (String s : (String[]) o) {
                                         int _tag = Integer.parseInt(s, 16);
                                         value += TagUtils.toString(_tag);
-                                        value += " (" + dict.keywordOf(_tag) + "), ";
+                                        value += " " + dict.keywordOf(_tag) + ", ";
                                     }
                                 } else {
                                     int _tag = Integer.parseInt((String)o, 16);
@@ -541,7 +543,17 @@ public class DicomObject {
                             DicomFile.Type type = DicomFile.Type.find(value);
                             value = value + "\n(" + type.getDescription() + ")";
                         }
-                        tags.add(new DicomTag(tag, value));
+                        int vm = 0;
+                        if (!isNull) {
+                            try {
+                                vm = vr.vmOf(_value);
+                            } catch (Throwable t) {
+                                String info = "Could not query value multiplicity: ";
+                                info += t.getMessage();
+                                log.warn(info);
+                            }
+                        }
+                        tags.add(new DicomTag(tag, vr, vm, value));
 
                     } catch (Throwable t) {
                         String info = "Could not determine value of tag " + TagUtils.toString(tag) + " " + dict.keywordOf(tag) + " (" + vr.name() + "): ";

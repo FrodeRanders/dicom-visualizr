@@ -38,6 +38,9 @@ public class DicomLoader {
 
             if ("DICOMDIR".equals(fileName)) {
                 loadDICOMDIR(ds, dicomFile);
+            } else {
+                // Not really supported at the moment
+                loadFile(ds, dicomFile);
             }
         }
     }
@@ -66,34 +69,10 @@ public class DicomLoader {
 
 
 
-    /**
-     * >(0008,0021) (SeriesDate) index=8 vr=DA value={Date} 20140522
-     * >(0008,0023) (ContentDate) index=8 vr=DA value={Date} 20140522
-     * >(0008,0031) (SeriesTime) index=8 vr=TM value={Time} 101638.000
-     * >(0008,0033) (ContentTime) index=8 vr=TM value={Time} 101638.000
-     * >(0008,0060) (Modality) index=8 vr=CS value={Code string} SR
-     * >(0008,0080) (InstitutionName) index=8 vr=LO value={Long string} NLL
-     * >(0008,1010) (StationName) index=8 vr=SH value={Short string} MMK1
-     * >(0008,103E) (SeriesDescription) index=8 vr=LO value={Long string} Anamnes
-     * >(0008,1050) (PerformingPhysicianName) index=8 vr=SH value={Short string} <null>
-     * >(0020,000D) (StudyInstanceUID) index=8 vr=UI value={Unique identifier} 1.2.752.99.1.1.1.0140131203
-     * >(0020,000E) (SeriesInstanceUID) index=8 vr=UI value={Unique identifier} 1.2.276.0.69.10.29.1.2135.20140522101638561.253295
-     * >(0020,0011) (SeriesNumber) index=8 vr=IS value={Integer string} 1
-     * >(0020,0013) (InstanceNumber) index=8 vr=IS value={Integer string} 3
-     * >(0040,0275) (RequestAttributesSequence) index=8 vr=SQ size=1
-     * >>(0040,1001) (RequestedProcedureID) index=0 vr=SH value={Short string} 0140131203
-     * >(0040,A043) (ConceptNameCodeSequence) index=8 vr=SQ size=1
-     * >>(0008,0100) (CodeValue) index=0 vr=SH value={Short string} 111400
-     * >>(0008,0102) (CodingSchemeDesignator) index=0 vr=SH value={Short string} DCM
-     * >>(0008,0103) (CodingSchemeVersion) index=0 vr=SH value={Short string} 1.0
-     * >>(0008,0104) (CodeMeaning) index=0 vr=LO value={Long string} Breast Imaging Report
-     * >(0040,A491) (CompletionFlag) index=8 vr=CS value={Code string} COMPLETE
-     * >(0040,A493) (VerificationFlag) index=8 vr=CS value={Code string} VERIFIED
-     */
-    public void loadDICOMDIR(final Attributes dataset, final File file) throws IOException {
+     public void loadDICOMDIR(final Attributes dataset, final File file) throws IOException {
 
         Map<String, String> data = new HashMap<>();
-        DicomFile dicomdirFile = new DicomFile(new DicomObject("DICOMDIR", dataset), file);
+        DicomFile dicomdirFile = new DicomFile(new DicomObject(file.getName(), dataset), file);
         loadedFiles.add(dicomdirFile);
 
         // (0004,1220) (DirectoryRecordSequence)
@@ -113,11 +92,13 @@ public class DicomLoader {
                         break;
 
                     case "SR DOCUMENT": {
+                        /*
                         String seriesInstanceUid = DicomObject.seriesInstanceUID(record);
                         String seriesDescription = DicomObject.seriesDescription(record);
                         String sopInstanceUid = DicomObject.sopInstanceUID(record);
                         String modality = DicomObject.modality(record);
                         String physicianName = DicomObject.performingPhysicianName(record);
+                        */
 
                         File referencedFile = file.getParentFile(); // Start relative to DICOMDIR
                         String[] referencedFileId = record.getStrings(TagUtils.toTag(0x0004, 0x1500));
@@ -133,7 +114,7 @@ public class DicomLoader {
 
                             try (DicomInputStream dicomInputStream = new DicomInputStream(new FileInputStream(referencedFile))) {
                                 Attributes ds = dicomInputStream.readDataset(-1, -1);
-                                loadFile(ds, referencedFile, dicomdirFile);
+                                loadFile(ds, referencedFile);
                             }
                         } else {
                             String info = "Referenced file does not exist: " + referencedFile.getPath();
@@ -143,11 +124,13 @@ public class DicomLoader {
                     break;
 
                     case "IMAGE": {
+                        /*
                         String seriesInstanceUid = DicomObject.seriesInstanceUID(record);
                         String seriesDescription = DicomObject.seriesDescription(record);
                         String sopInstanceUid = DicomObject.sopInstanceUID(record);
                         String modality = DicomObject.modality(record);
                         String physicianName = DicomObject.performingPhysicianName(record);
+                        */
 
                         File referencedFile = file.getParentFile(); // Start relative to DICOMDIR
                         String[] referencedFileId = record.getStrings(TagUtils.toTag(0x0004, 0x1500));
@@ -163,7 +146,7 @@ public class DicomLoader {
 
                             try (DicomInputStream dicomInputStream = new DicomInputStream(new FileInputStream(referencedFile))) {
                                 Attributes ds = dicomInputStream.readDataset(-1, -1);
-                                loadFile(ds, referencedFile, dicomdirFile);
+                                loadFile(ds, referencedFile);
                             }
                         } else {
                             String info = "Referenced file does not exist: " + referencedFile.getPath();
@@ -182,12 +165,13 @@ public class DicomLoader {
         }
     }
 
-    public void loadFile(final Attributes dataset, final File file, final DicomFile parentFile) throws IOException {
+    public void loadFile(final Attributes dataset, final File file) throws IOException {
 
-        Map<String, String> data = new HashMap<>();
-        DicomFile dicomFile = new DicomFile(new DicomObject(file.getName(), dataset), file, parentFile);
+        //Map<String, String> data = new HashMap<>();
+        DicomFile dicomFile = new DicomFile(new DicomObject(file.getName(), dataset), file);
         loadedFiles.add(dicomFile);
 
+        /*
         Sequence sequence = dataset.getSequence(TagUtils.toTag(0x0004, 0x1220));
         if (null != sequence) {
             for (int i = 0; i < sequence.size(); i++) {
@@ -196,5 +180,6 @@ public class DicomLoader {
                 log.debug("------------------------------------------------------------------------------------------");
             }
         }
+        */
     }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.ensure.visualizr.treechart.DicomTagNodeController">
+    <children>
+        <TitledPane fx:id="titlePane" alignment="CENTER" animated="false" collapsible="false" text="DicomTag" textOverrun="WORD_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns:fx="http://javafx.com/fxml">
+            <content>
+                <VBox blendMode="SRC_OVER" layoutY="5.0">
+                    <children>
+                        <VBox fillWidth="true">
+                            <children>
+                                <TableView fx:id="tagTable" maxHeight="55.0" />
+                            </children>
+                        </VBox>
+                        <VBox alignment="BOTTOM_LEFT" fillWidth="true">
+                            <children>
+                                <TextArea fx:id="valueText" />
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+    </children>
+</AnchorPane>

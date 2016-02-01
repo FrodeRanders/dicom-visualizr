@@ -14,17 +14,6 @@
         <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <bottom>
                 <BorderPane BorderPane.alignment="CENTER">
-                    <left>
-                        <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
-                            <children>
-                                <Label text="Loading : " />
-                                <ProgressBar fx:id="progressBar" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="12.0" prefWidth="300.0" progress="0.0" />
-                            </children>
-                        </HBox>
-                    </left>
-                    <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" />
-                    </padding>
                     <right>
                         <HBox alignment="CENTER_RIGHT">
                             <children>
@@ -46,7 +35,6 @@
                                     <left>
                                         <VBox fillWidth="true" padding="$x2" prefHeight="-1.0" prefWidth="-1.0">
                                             <children>
-
                                                 <HBox prefHeight="-1.0" prefWidth="-1.0">
                                                     <children>
                                                         <Label text="Path : ">
@@ -88,7 +76,7 @@
                             <items>
                                 <MenuItem onAction="#handleOpen" text="Open...">
                                     <accelerator>
-                                        <KeyCodeCombination alt="UP" code="E" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                     </accelerator>
                                     <graphic>
                                         <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
@@ -100,7 +88,7 @@
                                 </MenuItem>
                                 <MenuItem onAction="#handleClose" text="Close">
                                     <accelerator>
-                                        <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                        <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                     </accelerator>
                                     <graphic>
                                         <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
@@ -110,13 +98,25 @@
                                         </ImageView>
                                     </graphic>
                                 </MenuItem>
+                                <MenuItem onAction="#handlePrint" text="Print">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                    <graphic>
+                                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                            <!--<image>
+                                                <Image url="@close.png" />
+                                            </image>-->
+                                        </ImageView>
+                                    </graphic>
+                                </MenuItem>
                             </items>
                         </Menu>
-                        <Menu text="Options">
+                        <Menu text="View">
                             <items>
                                 <MenuItem onAction="#handleZoomIn" text="Zoom +">
                                     <accelerator>
-                                        <KeyCodeCombination alt="UP" code="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                        <KeyCodeCombination alt="UP" code="UP" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                                     </accelerator>
                                     <graphic>
                                         <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
@@ -128,7 +128,7 @@
                                 </MenuItem>
                                 <MenuItem onAction="#handleZoomOut" text="Zoom -">
                                     <accelerator>
-                                        <KeyCodeCombination alt="UP" code="DOWN" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                        <KeyCodeCombination alt="UP" code="DOWN" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                                     </accelerator>
                                     <graphic>
                                         <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">

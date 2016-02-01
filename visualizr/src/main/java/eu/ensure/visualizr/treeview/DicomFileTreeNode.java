@@ -5,7 +5,7 @@ import eu.ensure.visualizr.model.DicomFile;
 /**
  *
  */
-public class TreeNode{
+public class DicomFileTreeNode {
     private final String name;
     private final DicomFile dicomFile;
 
@@ -13,12 +13,12 @@ public class TreeNode{
      *
      * @param name
      */
-    public TreeNode(String name) {
+    public DicomFileTreeNode(String name) {
         this.name = name;
         this.dicomFile = null;
     }
 
-    public TreeNode(DicomFile dicomFile) {
+    public DicomFileTreeNode(DicomFile dicomFile) {
         this.dicomFile = dicomFile;
         this.name = dicomFile.getName();
     }
