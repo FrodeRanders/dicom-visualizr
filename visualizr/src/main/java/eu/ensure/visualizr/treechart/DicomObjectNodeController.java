@@ -1,11 +1,5 @@
 package eu.ensure.visualizr.treechart;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-
 import eu.ensure.visualizr.VisualizrGuiController;
 import eu.ensure.visualizr.model.DicomObject;
 import eu.ensure.visualizr.model.DicomTag;
@@ -14,18 +8,18 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Popup;
-import javafx.stage.PopupWindow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.ResourceBundle;
 
 /**
  * FXML Controller class
@@ -40,10 +34,8 @@ public class DicomObjectNodeController implements Initializable {
     @FXML
     public TableView tagsTable;
 
-    private DicomObject dicomObject;
     private ObservableList<DicomTag> observableTags;
-    private SimpleStringProperty title;
-    private SimpleStringProperty titlePre;
+    private SimpleStringProperty title = new SimpleStringProperty("");
 
     /**
      * Initializes the controller class.
@@ -65,9 +57,7 @@ public class DicomObjectNodeController implements Initializable {
         tagsTable.getColumns().setAll(idColumn, descriptionColumn, valueColumn);
         tagsTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
-        this.title = new SimpleStringProperty("");
-        this.titlePre = new SimpleStringProperty("");
-        this.titlePane.textProperty().bind(this.titlePre.concat(this.title));
+        titlePane.textProperty().bind(title);
     }
 
     /**
@@ -75,10 +65,18 @@ public class DicomObjectNodeController implements Initializable {
      *
      */
     public void setDicomObject(DicomObject dicomObject){
-        this.dicomObject = dicomObject;
 
-        String name = dicomObject.getName();
-        title.setValue(name);
+        String titleText = dicomObject.getId();
+        if (titleText.length() > 0) {
+            titleText += " ";
+        }
+        titleText += dicomObject.getName();
+        title.setValue(titleText);
+
+        final Tooltip tooltip = new Tooltip();
+        tooltip.setText(dicomObject.getDescription());
+        titlePane.setTooltip(tooltip);
+        titlePane.setCursor(Cursor.HAND);
 
         try {
             this.observableTags.addAll(dicomObject.getDicomTags());
@@ -89,16 +87,12 @@ public class DicomObjectNodeController implements Initializable {
                 }
             });
         } catch (Exception ex) {
-            String info = "Could not observe loading of DICOM object: " + name;
+            String info = "Could not observe loading of DICOM object: " + titleText;
             log.info(info, ex);
 
             this.observableTags.clear();
             tagsTable.setDisable(true);
         }
-    }
-
-    public void setTitlePrefix(String prefix){
-        this.titlePre.set(prefix);
     }
 
     public void setParentController(final VisualizrGuiController controller){
@@ -107,7 +101,7 @@ public class DicomObjectNodeController implements Initializable {
             public void changed(ObservableValue observableObject, DicomTag oldSelection, DicomTag newSelection) {
 
                 if (null != newSelection) {
-                    DicomTagPopup popup = controller.getTagPopup();
+                    DicomTagPopup popup = new DicomTagPopup(controller);
                     popup.show(newSelection);
                 }
             }

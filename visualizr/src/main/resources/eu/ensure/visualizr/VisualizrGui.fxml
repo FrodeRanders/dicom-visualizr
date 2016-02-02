@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
+<?import eu.ensure.visualizr.SizeableScrollPane?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.input.*?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
-
+<?import javafx.scene.paint.Color?>
 <AnchorPane id="AnchorPane" fx:id="rootPane" prefHeight="700.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="eu.ensure.visualizr.VisualizrGuiController">
     <children>
         <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -16,9 +14,6 @@
                 <BorderPane BorderPane.alignment="CENTER">
                     <right>
                         <HBox alignment="CENTER_RIGHT">
-                            <children>
-                                <Label fx:id="bottomMessage" />
-                            </children>
                             <BorderPane.margin>
                                 <Insets fx:id="x2" />
                             </BorderPane.margin>
@@ -49,11 +44,11 @@
                                         </VBox>
                                     </left>
                                 </BorderPane>
-                                <ScrollPane fx:id="scrollPane" disable="false" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+                                <SizeableScrollPane fx:id="scrollPane" disable="false" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
                                     <content>
-                                        <AnchorPane fx:id="" prefHeight="100.0" prefWidth="100.0" />
+                                        <AnchorPane prefHeight="100.0" prefWidth="100.0" />
                                     </content>
-                                </ScrollPane>
+                                </SizeableScrollPane>
                             </children>
                             <BorderPane.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -98,18 +93,18 @@
                                         </ImageView>
                                     </graphic>
                                 </MenuItem>
-                                <MenuItem onAction="#handlePrint" text="Print">
+                                <!--<MenuItem onAction="#handlePrint" text="Print">
                                     <accelerator>
                                         <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                                     </accelerator>
                                     <graphic>
                                         <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                            <!--<image>
-                                                <Image url="@close.png" />
-                                            </image>-->
+                                            <image>
+                                                <Image url="@print.png" />
+                                            </image>
                                         </ImageView>
                                     </graphic>
-                                </MenuItem>
+                                </MenuItem>-->
                             </items>
                         </Menu>
                         <Menu text="View">

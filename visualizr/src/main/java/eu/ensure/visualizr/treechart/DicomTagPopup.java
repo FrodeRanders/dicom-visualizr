@@ -17,27 +17,34 @@ public class DicomTagPopup extends Popup {
     private static final Logger log = LogManager.getLogger(DicomTagPopup.class);
 
     private final VisualizrGuiController parentController;
-    private final DicomTagNodeController popupController;
+    private DicomTagNodeController popupController = null;
 
-    public DicomTagPopup(VisualizrGuiController parentController) throws IOException {
+    public DicomTagPopup(VisualizrGuiController parentController) {
         this.parentController = parentController;
 
-        final Popup popup = new Popup();
+        setX(300);
+        setY(200);
+        setAutoHide(false);
 
-        popup.setX(300);
-        popup.setY(200);
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DicomTag.fxml"));
+            Node node = fxmlLoader.load();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DicomTag.fxml"));
-        Node node = fxmlLoader.load();
+            if (null != node) {
+                getContent().add(node);
+            }
+            popupController = fxmlLoader.<DicomTagNodeController>getController();
 
-        if (null != node) {
-            getContent().add(node);
+        } catch (IOException ioe) {
+            String info = "Failed to load DICOM tag popup: " + ioe.getMessage();
+            log.warn(info, ioe);
         }
-        popupController = fxmlLoader.<DicomTagNodeController>getController();
     }
 
     public void show(DicomTag dicomTag) {
-        popupController.setDicomTag(dicomTag);
-        show(parentController.getStage());
+        if (null != popupController) {
+            popupController.setDicomTag(dicomTag);
+            show(parentController.getStage());
+        }
     }
 }

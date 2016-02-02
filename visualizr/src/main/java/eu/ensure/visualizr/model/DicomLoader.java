@@ -46,7 +46,7 @@ public class DicomLoader {
     }
 
     /**
-     * List all the classes of the scanned jar.
+     * Get all DICOM files associated with DICOMDIR
      *
      * @return The list of classes.
      */
@@ -54,22 +54,13 @@ public class DicomLoader {
         return this.loadedFiles;
     }
 
-    /**
-     * Return true if we failed to read file
-     *
-     * @return Return true if an error encoured.
-     */
-    public boolean failure() {
-        return false;
-    }
 
     public String getFileName() {
         return this.fileName;
     }
 
 
-
-     public void loadDICOMDIR(final Attributes dataset, final File file) throws IOException {
+    public void loadDICOMDIR(final Attributes dataset, final File file) throws IOException {
 
         Map<String, String> data = new HashMap<>();
         DicomFile dicomdirFile = new DicomFile(new DicomObject(file.getName(), dataset), file);

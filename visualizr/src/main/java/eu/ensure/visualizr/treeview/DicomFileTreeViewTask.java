@@ -1,13 +1,15 @@
 package eu.ensure.visualizr.treeview;
 
 import eu.ensure.visualizr.model.DicomFile;
+import javafx.concurrent.Task;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import javafx.concurrent.Task;
-import javafx.scene.control.TreeItem;
 
 /**
  *
@@ -15,20 +17,40 @@ import javafx.scene.control.TreeItem;
 public class DicomFileTreeViewTask extends Task<TreeItem<DicomFileTreeNode>> {
 
     private final List<DicomFile> files;
+    private final TreeView treeView;
     private final TreeItem<DicomFileTreeNode> root;
 
-    public DicomFileTreeViewTask(List<DicomFile> files, String rootName) {
+    public DicomFileTreeViewTask(List<DicomFile> files, String rootName, TreeView treeView) {
         this.files = files;
-        this.root = new TreeItem<>(new DicomFileTreeNode(rootName));
+        this.treeView = treeView;
+
+        root = new TreeItem<>(new DicomFileTreeNode(rootName));
     }
 
     private void addItemToTree(DicomFile dicomFile) {
-        TreeItem<DicomFileTreeNode> node = new TreeItem<DicomFileTreeNode>(new DicomFileTreeNode(dicomFile));
+        final TreeItem<DicomFileTreeNode> node = new TreeItem<DicomFileTreeNode>(new DicomFileTreeNode(dicomFile));
 
         if (root.getChildren().size() > 0) {
-            root.getChildren().get(0).getChildren().add(node);
+            TreeItem<DicomFileTreeNode> dicomdir = root.getChildren().get(0);
+            dicomdir.getChildren().add(node);
         } else {
-            root.getChildren().add(node);
+            node.setExpanded(true);
+            /*
+            node.addEventHandler(TreeItem.branchCollapsedEvent(), new EventHandler<TreeItem.TreeModificationEvent<DicomFileTreeNode>>() {
+
+                @Override
+                public void handle(TreeItem.TreeModificationEvent<DicomFileTreeNode> event) {
+                    treeView.refresh();
+                }
+            });
+            node.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<DicomFileTreeNode>>() {
+                @Override
+                public void handle(TreeItem.TreeModificationEvent<DicomFileTreeNode> event) {
+                    treeView.refresh();
+                }
+            });
+            */
+            root.getChildren().add(node); // DICOMDIR
         }
     }
 

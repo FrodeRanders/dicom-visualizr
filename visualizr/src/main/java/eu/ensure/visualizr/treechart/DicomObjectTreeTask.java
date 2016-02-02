@@ -1,5 +1,7 @@
 package eu.ensure.visualizr.treechart;
 
+import de.chimos.ui.treechart.layout.NodePosition;
+import de.chimos.ui.treechart.layout.TreePane;
 import eu.ensure.visualizr.VisualizrGuiController;
 import eu.ensure.visualizr.model.DicomFile;
 import eu.ensure.visualizr.model.DicomObject;
@@ -7,57 +9,51 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-
-import java.io.IOException;
-
-import de.chimos.ui.treechart.layout.NodePosition;
-import de.chimos.ui.treechart.layout.TreePane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.util.List;
 
 public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTreeChart> {
     private static final Logger log = LogManager.getLogger(DicomObjectTreeTask.class);
 
     public class DicomObjectTreeChart {
         private TreePane pane;
-        private String message = "";
-        private Color messageColor = Color.BLACK;
+        private final double minX;
+        private final double minY;
+        private final double maxX;
+        private final double maxY;
 
-        public DicomObjectTreeChart(TreePane pane) {
+        public DicomObjectTreeChart(TreePane pane, double minX, double minY, double maxX, double maxY) {
             this.pane = pane;
-        }
-
-        public DicomObjectTreeChart(TreePane pane, String message) {
-            this(pane);
-            this.message = message;
-        }
-
-        public DicomObjectTreeChart(TreePane pane, String message, Color messageColor) {
-            this(pane, message);
-            this.messageColor = messageColor;
-        }
-
-        public String getMessage() {
-            return this.message;
-        }
-
-        public Color getMessageColor() {
-            return this.messageColor;
+            this.minX = minX;
+            this.minY = minY;
+            this.maxX = maxX;
+            this.maxY = maxY;
         }
 
         public TreePane getTreePane() {
             return this.pane;
         }
+
+        public double getMiddleX() {
+            return (maxX - minX) / 2.0;
+        }
+
+        public double getMiddleY() {
+            return (maxY - minY) / 2.0;
+        }
     }
 
     private final VisualizrGuiController caller;
-    private final DicomFile rootDicomFile;
+    private final DicomFile dicomFile;
 
     private static final double X_SPACING = 80d;
     private static final double Y_SPACING = 100d;
 
     public DicomObjectTreeTask(DicomFile dicomFile, VisualizrGuiController caller) {
-        this.rootDicomFile = dicomFile;
+        this.dicomFile = dicomFile;
         this.caller = caller;
     }
 
@@ -66,7 +62,6 @@ public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTre
     private Node loadDicomObject(DicomObject dicomObject) {
         Node element = null;
         try {
-            log.debug("Putting " + dicomObject.getName() + " onto chart area");
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DicomObject.fxml"));
             element = fxmlLoader.load();
 
@@ -84,7 +79,7 @@ public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTre
 
     /**
      */
-    private void loadTreeNodeChildren(DicomObject dicomObject, TreePane treePane, NodePosition parentPosition) throws Exception {
+    private Node loadTreeNodeChildren(DicomObject dicomObject, TreePane treePane, NodePosition parentPosition) throws Exception {
 
         NodePosition position;
         if (null == parentPosition) {
@@ -99,8 +94,23 @@ public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTre
         int childIndex = 0;
         for (DicomObject sequence : dicomObject.getSequences()) {
             NodePosition childPosition = position.getChild(childIndex++);
-            loadTreeNodeChildren(sequence, treePane, childPosition);
+            updateConvexHull(loadTreeNodeChildren(sequence, treePane, childPosition));
         }
+        return node;
+    }
+
+    double  minX = Double.MAX_VALUE,
+            minY = Double.MAX_VALUE,
+            maxX = 0.0,
+            maxY = 0.0;
+
+    private void updateConvexHull(Node node) {
+        double x = node.getLayoutX();
+        double y = node.getLayoutY();
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
     }
 
     @Override
@@ -109,11 +119,10 @@ public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTre
         treePane.setXAxisSpacing(X_SPACING);
         treePane.setYAxisSpacing(Y_SPACING);
 
-        log.debug("Building tree chart");
+        minX = minY = Double.MAX_VALUE;
+        maxX = maxY = 0.0;
 
-        loadTreeNodeChildren(rootDicomFile.getRootObject(), treePane, null);
-
-        this.updateProgress(1, 1);
-        return new DicomObjectTreeChart(treePane);
+        updateConvexHull(loadTreeNodeChildren(dicomFile.getRootObject(), treePane, null));
+        return new DicomObjectTreeChart(treePane, minX, minY, maxX, maxY);
     }
 }

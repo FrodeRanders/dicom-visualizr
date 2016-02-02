@@ -16,32 +16,60 @@ public class DicomObject {
 
     private static final boolean isVerbose = false;
 
-    private final String name;
-    private String heuristicName = null;
+    private final String id;  // Id if object is wrapped in a sequence, "" otherwise
+    private final String name;  // Name of sequence if wrapped -- otherwise name of file
+    private String description; // Heuristic description of sequence if wrapped
     private final Attributes attributes;
-    private final List<DicomObject> sequences = new ArrayList<>();
+
+    private final List<DicomObject> sequences = new ArrayList<>(); // Sub-sequences
     private final List<DicomTag> tags = new ArrayList<>();
 
-    public DicomObject(String name, Attributes attributes) {
+    public DicomObject(int tag, String name, Attributes attributes) {
+        if (tag > 0) {
+            id = TagUtils.toString(tag);
+        } else {
+            id = "";
+        }
         this.name = name;
         this.attributes = attributes;
 
         String sopClassUID = sopClassUID(attributes);
         if (null == sopClassUID) {
+            // We have no SOP class UID. If we are a DICOMDIR, we should have a
+            // directory record type to use instead.
             String recordType = directoryRecordType(attributes);
-            heuristicName = recordType;
-
+            if (null != recordType && recordType.length() > 0) {
+                description = recordType;
+            } else {
+                description = id;
+                if (description.length() > 0) {
+                    description += " ";
+                }
+                description += name;
+            }
         } else {
             DicomFile.Type type = DicomFile.Type.find(sopClassUID);
-            heuristicName = type.getDescription();
+            description = type.getDescription();
         }
 
         //
         populate(tags);
     }
 
+    public DicomObject(String name, Attributes attributes) {
+        this(0, name, attributes);
+    }
+
+    public String getId() {
+        return id;
+    }
+
     public String getName() {
-        return (null != heuristicName ? heuristicName : name);
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public List<DicomObject> getSequences() {
@@ -515,7 +543,7 @@ public class DicomObject {
 
                                     for (Attributes sequenceAttributes : sequence) {
                                         log.debug("Loading sub-sequence (have " + sequences.size() + " already)");
-                                        sequences.add(new DicomObject(name, sequenceAttributes));
+                                        sequences.add(new DicomObject(tag, name, sequenceAttributes));
                                     }
                                 }
                                 return true;

@@ -6,9 +6,6 @@ import org.dcm4che3.data.ElementDictionary;
 import org.dcm4che3.data.VR;
 import org.dcm4che3.util.TagUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
 /**
  * Created by froran on 2016-01-28.
  */
@@ -42,7 +39,7 @@ public class DicomTag {
     }
 
     public String getVM() {
-        return "" + vm;
+        return (vm > 0 ? "" + vm : "");
     }
 
     public String getDescription() {
