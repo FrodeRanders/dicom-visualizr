@@ -569,7 +569,7 @@ public class DicomObject {
                         String keyword = dict.keywordOf(tag);
                         if (null != keyword && keyword.length() > 0 && keyword.contains("SOPClassUID")) {
                             DicomFile.Type type = DicomFile.Type.find(value);
-                            value = value + "\n(" + type.getDescription() + ")";
+                            value = value + " (i.e. " + type.getDescription() + ")";
                         }
                         int vm = 0;
                         if (!isNull) {

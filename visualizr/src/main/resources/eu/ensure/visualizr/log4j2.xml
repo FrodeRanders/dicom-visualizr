@@ -3,16 +3,17 @@
 
     <Properties>
         <Property name="log-path">.</Property>
-        <Property name="log-file-name">visualizr-tests.log</Property>
-        <Property name="log-file-pattern">visualizr-tests-%d{yyyy-MM-dd}-%i.log</Property>
+        <Property name="log-file-name">visualizr.log</Property>
+        <Property name="log-file-pattern">visualizr-%d{yyyy-MM-dd}-%i.log</Property>
     </Properties>
 
     <!-- Appenders (writing to file in various ways) -->
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
+            <PatternLayout>
+                <pattern>[%-5level] [%t] %c{1} - %msg%n</pattern>
+            </PatternLayout>
         </Console>
-
 
         <RollingFile name="INTERNAL"
                      fileName="${log-path}/${log-file-name}"

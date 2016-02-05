@@ -2,8 +2,11 @@ package eu.ensure.visualizr.treechart;
 
 import eu.ensure.visualizr.VisualizrGuiController;
 import eu.ensure.visualizr.model.DicomTag;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Popup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,8 +25,9 @@ public class DicomTagPopup extends Popup {
     public DicomTagPopup(VisualizrGuiController parentController) {
         this.parentController = parentController;
 
-        setX(300);
-        setY(200);
+        //setScene(parentController.getScene());
+        setX(30);
+        setY(30);
         setAutoHide(false);
 
         try {
@@ -34,6 +38,7 @@ public class DicomTagPopup extends Popup {
                 getContent().add(node);
             }
             popupController = fxmlLoader.<DicomTagNodeController>getController();
+            popupController.setSelectable(false);
 
         } catch (IOException ioe) {
             String info = "Failed to load DICOM tag popup: " + ioe.getMessage();

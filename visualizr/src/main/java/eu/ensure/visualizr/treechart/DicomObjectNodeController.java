@@ -3,6 +3,7 @@ package eu.ensure.visualizr.treechart;
 import eu.ensure.visualizr.VisualizrGuiController;
 import eu.ensure.visualizr.model.DicomObject;
 import eu.ensure.visualizr.model.DicomTag;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,6 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.management.PlatformLoggingMXBean;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,13 +48,13 @@ public class DicomObjectNodeController implements Initializable {
         tagsTable.setItems(observableTags);
 
         TableColumn<DicomTag, String> idColumn = new TableColumn<>("Id");
-        idColumn.setCellValueFactory(new PropertyValueFactory<DicomTag, String>("id"));
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         TableColumn<DicomTag, String> descriptionColumn = new TableColumn<>("Description");
-        descriptionColumn.setCellValueFactory(new PropertyValueFactory<DicomTag, String>("description"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         TableColumn<DicomTag, String> valueColumn = new TableColumn<>("Value");
-        valueColumn.setCellValueFactory(new PropertyValueFactory<DicomTag, String>("value"));
+        valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
 
         tagsTable.getColumns().setAll(idColumn, descriptionColumn, valueColumn);
         tagsTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -90,7 +92,7 @@ public class DicomObjectNodeController implements Initializable {
             String info = "Could not observe loading of DICOM object: " + titleText;
             log.info(info, ex);
 
-            this.observableTags.clear();
+            observableTags.clear();
             tagsTable.setDisable(true);
         }
     }

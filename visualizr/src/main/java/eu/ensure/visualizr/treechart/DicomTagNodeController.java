@@ -1,9 +1,11 @@
 package eu.ensure.visualizr.treechart;
 
 import eu.ensure.visualizr.model.DicomTag;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
@@ -11,6 +13,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,6 +40,9 @@ public class DicomTagNodeController implements Initializable {
 
     private ObservableList<DicomTag> observableTags; // Just one :)
     private SimpleStringProperty title;
+
+    private double xOffset = 0d;
+    private double yOffset = 0d;
 
     /**
      * Initializes the controller class.
@@ -69,6 +77,18 @@ public class DicomTagNodeController implements Initializable {
 
         title = new SimpleStringProperty("");
         titlePane.textProperty().bind(title);
+    }
+
+    public void setSelectable(boolean isSelectable) {
+        if (!isSelectable) {
+            tagTable.getSelectionModel().selectedItemProperty().addListener((c, oldSelection, newSelection) -> {
+                if (null != newSelection) {
+                    Platform.runLater(() -> tagTable.getSelectionModel().clearSelection());
+                }
+            });
+
+            valueText.setEditable(false);
+        }
     }
 
     /**

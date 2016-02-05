@@ -3,7 +3,9 @@
     <!-- Rudimentary configuration. Will dynamically be replaced by configuration in namespace -->
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%t] %c{1} - %msg%n"/>
+            <PatternLayout>
+                <pattern>[%t] %c{1} - %msg%n</pattern>
+            </PatternLayout>
         </Console>
     </Appenders>
 

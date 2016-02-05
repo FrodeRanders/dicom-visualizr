@@ -122,8 +122,8 @@ public class VisualizrGuiController implements Initializable {
      *
      * @return The main scene.
      */
-    protected Scene getScene(){
-        return this.rootPane.getScene();
+    public Scene getScene(){
+        return rootPane.getScene();
     }
 
     /**
@@ -234,13 +234,9 @@ public class VisualizrGuiController implements Initializable {
         });
 
         fileChooser = new FileChooser();
-        fileChooser.setTitle("Navigate to DICOMDIR of your choice");
-        fileChooser.setInitialDirectory(
-                new File(System.getProperty("user.home"))
-        );
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("DICOMDIR", "DICOMDIR")
-        );
+        fileChooser.setTitle("Select DICOM file (DICOMDIR)");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("DICOMDIR", "DICOMDIR"));
     }
 
     @FXML
@@ -352,6 +348,6 @@ public class VisualizrGuiController implements Initializable {
         this.stage = stage;
     }
     public Stage getStage(){
-        return this.stage;
+        return stage;
     }
 }
