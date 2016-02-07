@@ -9,11 +9,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.*;
+import javafx.scene.layout.AnchorPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,11 +34,15 @@ public class DicomObjectNodeController implements Initializable {
     private static final Logger log = LogManager.getLogger(DicomObjectNodeController.class);
 
     @FXML
+    public AnchorPane anchorPane;
+
+    @FXML
     public TitledPane titlePane;
 
     @FXML
     public TableView tagsTable;
 
+    private DicomObject dicomObject = null;
     private ObservableList<DicomTag> observableTags;
     private SimpleStringProperty title = new SimpleStringProperty("");
 
@@ -60,6 +67,31 @@ public class DicomObjectNodeController implements Initializable {
         tagsTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
         titlePane.textProperty().bind(title);
+
+        tagsTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+                    dumpStructureToClipboard();
+                }
+            }
+        });
+
+        tagsTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                dumpStructureToClipboard();
+            }
+        });
+    }
+
+    private void dumpStructureToClipboard() {
+        log.debug("Creating tree-dump in clipboard");
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        final ClipboardContent content = new ClipboardContent();
+        String text = dicomObject.asStructuredText();
+        content.putString(text);
+        clipboard.setContent(content);
     }
 
     /**
@@ -67,6 +99,7 @@ public class DicomObjectNodeController implements Initializable {
      *
      */
     public void setDicomObject(DicomObject dicomObject){
+        this.dicomObject = dicomObject;
 
         String titleText = dicomObject.getId();
         if (titleText.length() > 0) {

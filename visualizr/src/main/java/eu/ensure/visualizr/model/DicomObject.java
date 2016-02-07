@@ -207,7 +207,7 @@ public class DicomObject {
                                         value += " " + dict.keywordOf(_tag) + ", ";
                                     }
                                 } else {
-                                    int _tag = Integer.parseInt((String)o, 16);
+                                    int _tag = Integer.parseInt((String) o, 16);
                                     value += TagUtils.toString(_tag);
                                     value += " (" + dict.keywordOf(_tag) + ")";
                                 }
@@ -599,4 +599,34 @@ public class DicomObject {
             log.info(info, t);
         }
     }
+
+    public String asStructuredText() {
+        return asStructuredText("");
+    }
+
+    private final static String INDENT = "    ";
+
+    private String asStructuredText(String prefix) {
+        String text = prefix + "[";
+        if (null == id || id.length() == 0) {
+            text += name;
+            text += " : ";
+        }
+        text += description + "]";
+        text += "\n";
+
+        prefix += INDENT;
+
+        for (DicomTag tag : tags) {
+            text += tag.asStructuredText(prefix);
+        }
+        text += "\n";
+
+        for (DicomObject sequence : sequences) {
+            text += sequence.asStructuredText(prefix);
+        }
+
+        return text;
+    }
 }
+

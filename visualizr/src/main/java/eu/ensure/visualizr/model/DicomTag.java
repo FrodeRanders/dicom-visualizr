@@ -52,6 +52,15 @@ public class DicomTag {
 
     public String getValue() { return value; }
 
+    /* package private */ String asStructuredText(String prefix) {
+        String text = prefix;
+        text += id;
+        text += " " + description + " :: ";
+        text += value;
+        text += "\n";
+        return text;
+    }
+
     @Override
     public String toString(){
         return getId() + " " + getDescription();
