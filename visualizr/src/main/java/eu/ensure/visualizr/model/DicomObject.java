@@ -1,5 +1,6 @@
 package eu.ensure.visualizr.model;
 
+import static eu.ensure.vopn.lang.Number.asHumanApproximate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dcm4che3.data.*;
@@ -443,7 +444,7 @@ public class DicomObject {
                                         value += "" + b + ", ";
                                     }
                                 } else {
-                                    value = "<data size=" + eu.ensure.commons.lang.Number.asHumanApproximate(_us.length) + ">";
+                                    value = "<data size=" + asHumanApproximate(_us.length) + ">";
                                 }
                                 value = compose("Unsigned short", value, isVerbose);
                             }
@@ -472,7 +473,7 @@ public class DicomObject {
                                         value += "" + i + ", ";
                                     }
                                 } else {
-                                    value = "<data size=" + eu.ensure.commons.lang.Number.asHumanApproximate(_ul.length) + ">";
+                                    value = "<data size=" + asHumanApproximate(_ul.length) + ">";
                                 }
                                 value = compose("Unsigned long", value, isVerbose);
                             }
@@ -493,7 +494,7 @@ public class DicomObject {
                                         value += "" + b + ", ";
                                     }
                                 } else {
-                                    value = "<data size=" + eu.ensure.commons.lang.Number.asHumanApproximate(_ob.length) + ">";
+                                    value = "<data size=" + asHumanApproximate(_ob.length) + ">";
                                 }
                                 value = compose("Other byte", value, isVerbose);
                             }
@@ -527,7 +528,7 @@ public class DicomObject {
                                         value += "" + b + ", ";
                                     }
                                 } else {
-                                    value = "<data size=" + eu.ensure.commons.lang.Number.asHumanApproximate(_ow.length) + ">";
+                                    value = "<data size=" + asHumanApproximate(_ow.length) + ">";
                                 }
                                 value = compose("Other word", value, isVerbose);
                             }
@@ -555,7 +556,7 @@ public class DicomObject {
                                 if (_un.length <= 80) {
                                     value = new String(_un, "ISO-8859-1");
                                 } else {
-                                    value = "<data size=" + eu.ensure.commons.lang.Number.asHumanApproximate(_un.length) + ">";
+                                    value = "<data size=" + asHumanApproximate(_un.length) + ">";
                                 }
                                 value = compose("Unknown", value, isVerbose);
                             }

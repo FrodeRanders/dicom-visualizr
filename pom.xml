@@ -13,15 +13,15 @@
     <inceptionYear>2016</inceptionYear>
 
     <properties>
-        <ensure.commons.version>1.3</ensure.commons.version>
+        <ensure.vopn.version>1.0-SNAPSHOT</ensure.vopn.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>eu.ensure</groupId>
-                <artifactId>commons</artifactId>
-                <version>${ensure.commons.version}</version>
+                <artifactId>vopn</artifactId>
+                <version>${ensure.vopn.version}</version>
             </dependency>
 
             <!-- -->

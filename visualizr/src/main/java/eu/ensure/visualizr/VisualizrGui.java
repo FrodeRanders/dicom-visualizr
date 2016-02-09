@@ -1,6 +1,6 @@
 package eu.ensure.visualizr;
 
-import eu.ensure.commons.lang.LoggingUtils;
+import static eu.ensure.vopn.lang.LoggingUtils.setupLoggingFor;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
  * Created by froran on 2016-01-28.
  */
 public class VisualizrGui extends Application {
-    private static final Logger log = LoggingUtils.setupLoggingFor(VisualizrGui.class, "log4j2.xml");
+    private static final Logger log = setupLoggingFor(VisualizrGui.class, "log4j2.xml");
 
     @Override
     public void start(Stage primaryStage) throws Exception {
