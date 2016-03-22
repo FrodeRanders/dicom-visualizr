@@ -1,6 +1,8 @@
 package eu.ensure.visualizr.model;
 
 import static eu.ensure.vopn.lang.Number.asHumanApproximate;
+
+import eu.ensure.vopn.lang.Stacktrace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dcm4che3.data.*;
@@ -579,14 +581,18 @@ public class DicomObject {
                             } catch (Throwable t) {
                                 String info = "Could not query value multiplicity: ";
                                 info += t.getMessage();
-                                log.warn(info);
+                                log.debug(info);
                             }
                         }
                         tags.add(new DicomTag(tag, vr, vm, value));
 
                     } catch (Throwable t) {
-                        String info = "Could not determine value of tag " + TagUtils.toString(tag) + " " + dict.keywordOf(tag) + " (" + vr.name() + "): ";
-                        info += t.getMessage();
+                        String info = "Could not determine value of tag " + TagUtils.toString(tag) + " " + dict.keywordOf(tag) + " (" + vr.name() + ")";
+                        Throwable base = Stacktrace.getBaseCause(t);
+                        String msg = base.getMessage();
+                        if (null != msg) {
+                            info += ": " + msg;
+                        }
                         log.warn(info);
                     }
 

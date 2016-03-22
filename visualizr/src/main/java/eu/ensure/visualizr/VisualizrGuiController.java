@@ -236,7 +236,7 @@ public class VisualizrGuiController implements Initializable {
         fileChooser = new FileChooser();
         fileChooser.setTitle("Select DICOM file (DICOMDIR)");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("DICOMDIR", "DICOMDIR"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("DICOM files", "DICOMDIR", "*.DCM"));
     }
 
     @FXML
