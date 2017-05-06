@@ -13,7 +13,9 @@
     <inceptionYear>2016</inceptionYear>
 
     <properties>
-        <ensure.vopn.version>1.2</ensure.vopn.version>
+        <ensure.vopn.version>1.3</ensure.vopn.version>
+        <log4j.version>2.8.2</log4j.version>
+        <axiom.version>1.2.20</axiom.version>
     </properties>
 
     <prerequisites>
@@ -32,37 +34,37 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j-impl</artifactId>
-                <version>2.8.1</version>
+                <version>${log4j.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
-                <version>2.8.1</version>
+                <version>${log4j.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
-                <version>2.8.1</version>
+                <version>${log4j.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-api</artifactId>
-                <version>1.2.20</version>
+                <version>${axiom.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-impl</artifactId>
-                <version>1.2.20</version>
+                <version>${axiom.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>woodstox-core-asl</artifactId>
-                <version>4.4.1</version> <!-- 4.0.6 -->
+                <version>4.4.1</version>
             </dependency>
 
             <dependency>
