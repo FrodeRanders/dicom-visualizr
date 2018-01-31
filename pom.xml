@@ -6,14 +6,14 @@
 
     <groupId>eu.ensure</groupId>
     <artifactId>dicom-visualizr-parent</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <packaging>pom</packaging>
 
     <name>Wrapper for the Dicom Visualizer components</name>
     <inceptionYear>2016</inceptionYear>
 
     <properties>
-        <ensure.vopn.version>1.6</ensure.vopn.version>
+        <ensure.vopn.version>1.7</ensure.vopn.version>
         <log4j.version>2.10.0</log4j.version>
         <axiom.version>1.2.20</axiom.version>
     </properties>
