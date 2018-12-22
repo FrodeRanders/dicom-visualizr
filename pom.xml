@@ -15,7 +15,7 @@
     <properties>
         <vopn.version>2.3</vopn.version>
         <log4j.version>2.11.1</log4j.version>
-        <axiom.version>1.2.20</axiom.version>
+        <axiom.version>1.2.21</axiom.version>
     </properties>
 
     <prerequisites>
