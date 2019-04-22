@@ -1,6 +1,5 @@
 package org.gautelis.visualizr.treechart;
 
-import org.gautelis.visualizr.model.DicomTag;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,13 +13,13 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.gautelis.visualizr.model.DicomTag;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
  * FXML Controller class
- *
  */
 public class DicomTagNodeController implements Initializable {
     private static final Logger log = LogManager.getLogger(DicomTagNodeController.class);
@@ -29,7 +28,7 @@ public class DicomTagNodeController implements Initializable {
     public TitledPane titlePane;
 
     @FXML
-    public TableView tagTable;
+    public TableView<DicomTag> tagTable;
 
     @FXML
     public TextArea valueText;
@@ -49,16 +48,16 @@ public class DicomTagNodeController implements Initializable {
         tagTable.setItems(observableTags);
 
         TableColumn<DicomTag, String> idColumn = new TableColumn<>("Id");
-        idColumn.setCellValueFactory(new PropertyValueFactory<DicomTag, String>("id"));
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         TableColumn<DicomTag, String> descriptionColumn = new TableColumn<>("Description");
-        descriptionColumn.setCellValueFactory(new PropertyValueFactory<DicomTag, String>("description"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         TableColumn<DicomTag, String> vrColumn = new TableColumn<>("VR");
-        vrColumn.setCellValueFactory(new PropertyValueFactory<DicomTag, String>("VR"));
+        vrColumn.setCellValueFactory(new PropertyValueFactory<>("VR"));
 
         TableColumn<DicomTag, String> vmColumn = new TableColumn<>("VM");
-        vmColumn.setCellValueFactory(new PropertyValueFactory<DicomTag, String>("VM"));
+        vmColumn.setCellValueFactory(new PropertyValueFactory<>("VM"));
 
         tagTable.getColumns().setAll(idColumn, descriptionColumn, vrColumn, vmColumn);
         tagTable.setSelectionModel(new NullTableViewSelectionModel(tagTable));
@@ -89,9 +88,8 @@ public class DicomTagNodeController implements Initializable {
 
     /**
      *
-     *
      */
-    public void setDicomTag(DicomTag dicomTag){
+    public void setDicomTag(DicomTag dicomTag) {
         String id = dicomTag.getId();
         title.setValue(id + " " + dicomTag.getDescription());
 

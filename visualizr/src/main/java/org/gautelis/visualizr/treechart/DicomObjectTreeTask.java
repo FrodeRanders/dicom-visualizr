@@ -2,53 +2,27 @@ package org.gautelis.visualizr.treechart;
 
 import de.chimos.ui.treechart.layout.NodePosition;
 import de.chimos.ui.treechart.layout.TreePane;
-import org.gautelis.visualizr.VisualizrGuiController;
-import org.gautelis.visualizr.model.DicomFile;
-import org.gautelis.visualizr.model.DicomObject;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.gautelis.visualizr.VisualizrGuiController;
+import org.gautelis.visualizr.model.DicomFile;
+import org.gautelis.visualizr.model.DicomObject;
 
 import java.io.IOException;
 
 public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTreeChart> {
     private static final Logger log = LogManager.getLogger(DicomObjectTreeTask.class);
-
-    public class DicomObjectTreeChart {
-        private TreePane pane;
-        private final double minX;
-        private final double minY;
-        private final double maxX;
-        private final double maxY;
-
-        public DicomObjectTreeChart(TreePane pane, double minX, double minY, double maxX, double maxY) {
-            this.pane = pane;
-            this.minX = minX;
-            this.minY = minY;
-            this.maxX = maxX;
-            this.maxY = maxY;
-        }
-
-        public TreePane getTreePane() {
-            return this.pane;
-        }
-
-        public double getMiddleX() {
-            return (maxX - minX) / 2.0;
-        }
-
-        public double getMiddleY() {
-            return (maxY - minY) / 2.0;
-        }
-    }
-
-    private final VisualizrGuiController caller;
-    private final DicomFile dicomFile;
-
     private static final double X_SPACING = 80d;
     private static final double Y_SPACING = 100d;
+    private final VisualizrGuiController caller;
+    private final DicomFile dicomFile;
+    double minX = Double.MAX_VALUE,
+            minY = Double.MAX_VALUE,
+            maxX = 0.0,
+            maxY = 0.0;
 
     public DicomObjectTreeTask(DicomFile dicomFile, VisualizrGuiController caller) {
         this.dicomFile = dicomFile;
@@ -56,6 +30,7 @@ public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTre
     }
 
     /**
+     *
      */
     private Node loadDicomObject(DicomObject dicomObject) {
         Node element = null;
@@ -63,7 +38,7 @@ public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTre
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("DicomObject.fxml"));
             element = fxmlLoader.load();
 
-            DicomObjectNodeController elementController = fxmlLoader.<DicomObjectNodeController>getController();
+            DicomObjectNodeController elementController = fxmlLoader.getController();
             elementController.setDicomObject(dicomObject);
             elementController.setParentController(caller);
 
@@ -76,6 +51,7 @@ public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTre
 
 
     /**
+     *
      */
     private Node loadTreeNodeChildren(DicomObject dicomObject, TreePane treePane, NodePosition parentPosition) throws Exception {
 
@@ -97,11 +73,6 @@ public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTre
         return node;
     }
 
-    double  minX = Double.MAX_VALUE,
-            minY = Double.MAX_VALUE,
-            maxX = 0.0,
-            maxY = 0.0;
-
     private void updateConvexHull(Node node) {
         double x = node.getLayoutX();
         double y = node.getLayoutY();
@@ -122,5 +93,33 @@ public class DicomObjectTreeTask extends Task<DicomObjectTreeTask.DicomObjectTre
 
         updateConvexHull(loadTreeNodeChildren(dicomFile.getRootObject(), treePane, null));
         return new DicomObjectTreeChart(treePane, minX, minY, maxX, maxY);
+    }
+
+    public class DicomObjectTreeChart {
+        private final double minX;
+        private final double minY;
+        private final double maxX;
+        private final double maxY;
+        private TreePane pane;
+
+        public DicomObjectTreeChart(TreePane pane, double minX, double minY, double maxX, double maxY) {
+            this.pane = pane;
+            this.minX = minX;
+            this.minY = minY;
+            this.maxX = maxX;
+            this.maxY = maxY;
+        }
+
+        public TreePane getTreePane() {
+            return this.pane;
+        }
+
+        public double getMiddleX() {
+            return (maxX - minX) / 2.0;
+        }
+
+        public double getMiddleY() {
+            return (maxY - minY) / 2.0;
+        }
     }
 }

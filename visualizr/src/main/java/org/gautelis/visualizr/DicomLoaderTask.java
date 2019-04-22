@@ -1,9 +1,9 @@
 package org.gautelis.visualizr;
 
-import org.gautelis.visualizr.model.DicomLoader;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.gautelis.visualizr.model.DicomLoader;
 
 import java.io.File;
 
@@ -15,7 +15,7 @@ public class DicomLoaderTask extends Task<DicomLoader> {
 
     private final File dicomFile;
 
-    public DicomLoaderTask(File dicomFile){
+    public DicomLoaderTask(File dicomFile) {
         this.dicomFile = dicomFile;
     }
 

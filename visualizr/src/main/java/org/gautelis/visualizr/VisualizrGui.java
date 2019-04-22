@@ -15,6 +15,17 @@ import org.apache.logging.log4j.Logger;
 public class VisualizrGui extends Application {
     private static final Logger log = LogManager.getLogger(VisualizrGui.class);
 
+    /**
+     * The main() method is ignored in correctly deployed JavaFX application.
+     * main() serves only as fallback in case the application can not be
+     * launched through deployment artifacts.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.initStyle(StageStyle.DECORATED);
@@ -31,7 +42,7 @@ public class VisualizrGui extends Application {
         //
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("VisualizrGui.fxml"));
         Parent root = fxmlLoader.load();
-        VisualizrGuiController controller = fxmlLoader.<VisualizrGuiController>getController();
+        VisualizrGuiController controller = fxmlLoader.getController();
         controller.setStage(primaryStage);
 
         Scene scene = new Scene(root);
@@ -40,16 +51,5 @@ public class VisualizrGui extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("DICOM Visualizr");
         primaryStage.show();
-    }
-
-    /**
-     * The main() method is ignored in correctly deployed JavaFX application.
-     * main() serves only as fallback in case the application can not be
-     * launched through deployment artifacts.
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
     }
 }

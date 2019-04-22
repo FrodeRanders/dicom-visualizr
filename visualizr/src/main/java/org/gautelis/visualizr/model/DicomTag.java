@@ -50,7 +50,9 @@ public class DicomTag {
         return TagUtils.isPrivateTag(tag);
     }
 
-    public String getValue() { return value; }
+    public String getValue() {
+        return value;
+    }
 
     /* package private */ String asStructuredText(String prefix) {
         String text = prefix;
@@ -62,7 +64,7 @@ public class DicomTag {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return getId() + " " + getDescription();
     }
 }
