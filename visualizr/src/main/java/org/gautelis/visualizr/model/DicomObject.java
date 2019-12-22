@@ -1,15 +1,16 @@
 package org.gautelis.visualizr.model;
 
-import static org.gautelis.vopn.lang.Number.asHumanApproximate;
-
-import org.gautelis.vopn.lang.Stacktrace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dcm4che3.data.*;
 import org.dcm4che3.util.TagUtils;
+import org.gautelis.vopn.lang.Stacktrace;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.gautelis.vopn.lang.Number.asHumanApproximate;
 
 /**
  * Created by froran on 2016-01-28.
@@ -18,14 +19,14 @@ public class DicomObject {
     private static final Logger log = LogManager.getLogger(DicomObject.class);
 
     private static final boolean isVerbose = false;
-
+    private final static String INDENT = "    ";
     private final String id;  // Id if object is wrapped in a sequence, "" otherwise
     private final String name;  // Name of sequence if wrapped -- otherwise name of file
-    private String description; // Heuristic description of sequence if wrapped
     private final Attributes attributes;
 
     private final List<DicomObject> sequences = new ArrayList<>(); // Sub-sequences
     private final List<DicomTag> tags = new ArrayList<>();
+    private String description; // Heuristic description of sequence if wrapped
 
     public DicomObject(int tag, String name, Attributes attributes) {
         if (tag > 0) {
@@ -61,35 +62,6 @@ public class DicomObject {
 
     public DicomObject(String name, Attributes attributes) {
         this(0, name, attributes);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public List<DicomObject> getSequences() {
-        return sequences;
-    }
-
-    private String compose(String description, Object actualValue, boolean verbose) {
-        return (verbose ? "{" + description + "} " + actualValue : "" + actualValue);
-    }
-
-    public String getSopClassUID() {
-        return sopClassUID(attributes);
-    }
-
-
-    public List<DicomTag> getDicomTags() {
-        return tags;
     }
 
     public static String directoryRecordType(final Attributes dataset) {
@@ -162,6 +134,34 @@ public class DicomObject {
             log.debug("performingPhysicianName = " + performingPhysicianName);
         }
         return performingPhysicianName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<DicomObject> getSequences() {
+        return sequences;
+    }
+
+    private String compose(String description, Object actualValue, boolean verbose) {
+        return (verbose ? "{" + description + "} " + actualValue : "" + actualValue);
+    }
+
+    public String getSopClassUID() {
+        return sopClassUID(attributes);
+    }
+
+    public List<DicomTag> getDicomTags() {
+        return tags;
     }
 
     private void populate(List<DicomTag> tags) {
@@ -556,7 +556,7 @@ public class DicomObject {
                             {
                                 byte[] _un = vr.toBytes(_value, characterSet);
                                 if (_un.length <= 80) {
-                                    value = new String(_un, "ISO-8859-1");
+                                    value = new String(_un, StandardCharsets.ISO_8859_1);
                                 } else {
                                     value = "<data size=" + asHumanApproximate(_un.length) + ">";
                                 }
@@ -610,8 +610,6 @@ public class DicomObject {
     public String asStructuredText() {
         return asStructuredText("");
     }
-
-    private final static String INDENT = "    ";
 
     private String asStructuredText(String prefix) {
         String text = prefix + "[";

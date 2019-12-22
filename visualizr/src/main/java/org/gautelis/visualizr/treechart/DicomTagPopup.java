@@ -1,12 +1,12 @@
 package org.gautelis.visualizr.treechart;
 
-import org.gautelis.visualizr.VisualizrGuiController;
-import org.gautelis.visualizr.model.DicomTag;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.stage.Popup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.gautelis.visualizr.VisualizrGuiController;
+import org.gautelis.visualizr.model.DicomTag;
 
 import java.io.IOException;
 
@@ -34,7 +34,7 @@ public class DicomTagPopup extends Popup {
             if (null != node) {
                 getContent().add(node);
             }
-            popupController = fxmlLoader.<DicomTagNodeController>getController();
+            popupController = fxmlLoader.getController();
             popupController.setSelectable(false);
 
         } catch (IOException ioe) {

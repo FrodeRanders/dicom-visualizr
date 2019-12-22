@@ -14,8 +14,8 @@
 
     <properties>
         <vopn.version>2.3</vopn.version>
-        <log4j.version>2.11.1</log4j.version>
-        <axiom.version>1.2.21</axiom.version>
+        <log4j.version>2.13.0</log4j.version>
+        <axiom.version>1.2.22</axiom.version>
     </properties>
 
     <prerequisites>
@@ -65,6 +65,18 @@
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>4.4.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-controls</artifactId>
+                <version>13</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-fxml</artifactId>
+                <version>13.0.1</version>
             </dependency>
 
             <dependency>

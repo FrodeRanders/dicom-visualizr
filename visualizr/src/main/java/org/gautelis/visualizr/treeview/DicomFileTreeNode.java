@@ -10,7 +10,6 @@ public class DicomFileTreeNode {
     private final DicomFile dicomFile;
 
     /**
-     *
      * @param name
      */
     public DicomFileTreeNode(String name) {

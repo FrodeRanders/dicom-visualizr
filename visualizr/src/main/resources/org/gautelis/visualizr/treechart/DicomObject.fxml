@@ -3,20 +3,16 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.*?>
-<AnchorPane fx:id="anchorPane" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.gautelis.visualizr.treechart.DicomObjectNodeController">
-    <children>
-        <TitledPane fx:id="titlePane" alignment="CENTER" animated="false" collapsible="false" text="DicomObject" textOverrun="WORD_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns:fx="http://javafx.com/fxml">
-            <content>
-                <VBox blendMode="SRC_OVER" layoutY="95.0">
-                    <children>
-                        <VBox>
-                            <children>
-                                <TableView fx:id="tagsTable" />
-                            </children>
-                        </VBox>
-                    </children>
-                </VBox>
-            </content>
-        </TitledPane>
-    </children>
+
+<AnchorPane fx:id="anchorPane" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.gautelis.visualizr.treechart.DicomObjectNodeController">
+    <TitledPane fx:id="titlePane" alignment="CENTER" animated="false" collapsible="false" text="DicomObject"
+                textOverrun="WORD_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns:fx="http://javafx.com/fxml">
+        <VBox blendMode="SRC_OVER" layoutY="95.0">
+            <VBox>
+                <TableView fx:id="tagsTable"/>
+            </VBox>
+        </VBox>
+    </TitledPane>
 </AnchorPane>

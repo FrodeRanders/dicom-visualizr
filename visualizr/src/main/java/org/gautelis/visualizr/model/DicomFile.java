@@ -12,12 +12,37 @@ import java.util.Map;
  */
 public class DicomFile {
     private static final Logger log = LogManager.getLogger(DicomFile.class);
+    private final File dicomFile;
+    private final DicomObject rootObject;
+    private Type type = Type.Unknown;
+    public DicomFile(DicomObject dicomObject, File dicomFile) {
+        this.rootObject = dicomObject;
+        this.dicomFile = dicomFile;
+
+        this.type = Type.find(dicomObject.getSopClassUID());
+    }
+
+    public DicomObject getRootObject() {
+        return rootObject;
+    }
+
+    public String getName() {
+        return dicomFile.getName();
+    }
+
+    public String getPath() {
+        return dicomFile.getPath();
+    }
+
+    public Type getType() {
+        return type;
+    }
 
     /*
      * From http://www.dicomlibrary.com/dicom/sop/
      *
      */
-    public enum Type{
+    public enum Type {
         // SOP UID	SOP name
         Verification_SOP_Class("1.2.840.10008.1.1", "Verification", false),
         Storage_Commitment_Push_Model_SOP_Class("1.2.840.10008.1.20.1", "Storage Commitment Push Model", false),
@@ -189,22 +214,22 @@ public class DicomFile {
         Hanging_Protocol_Information_Model_MOVE("1.2.840.10008.5.1.4.38.3", "Hanging Protocol Information Model – MOVE", false),
         Unknown("<unknown>", "<unknown>", false);
 
-        private final String sopUID;
-        private final String description;
-        private final boolean isRetired;
-
-        Type(String sopUID, String description, boolean isRetired){
-            this.sopUID = sopUID;
-            this.description = description;
-            this.isRetired = isRetired;
-        }
-
-
         private static Map<String, Type> map = new HashMap<>();
+
         static {
             for (Type type : Type.values()) {
                 map.put(type.getSopUID(), type);
             }
+        }
+
+        private final String sopUID;
+        private final String description;
+        private final boolean isRetired;
+
+        Type(String sopUID, String description, boolean isRetired) {
+            this.sopUID = sopUID;
+            this.description = description;
+            this.isRetired = isRetired;
         }
 
         public static Type find(String sopClassUID) {
@@ -219,7 +244,7 @@ public class DicomFile {
             return sopUID;
         }
 
-        public String getDescription(){
+        public String getDescription() {
             return this.description;
         }
 
@@ -228,36 +253,8 @@ public class DicomFile {
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             return getDescription();
         }
-    }
-
-    private Type type = Type.Unknown;
-    private final File dicomFile;
-    private final DicomObject rootObject;
-
-    public DicomFile(DicomObject dicomObject, File dicomFile) {
-        this.rootObject = dicomObject;
-        this.dicomFile = dicomFile;
-
-        this.type = Type.find(dicomObject.getSopClassUID());
-    }
-
-
-    public DicomObject getRootObject() {
-        return rootObject;
-    }
-
-    public String getName() {
-        return dicomFile.getName();
-    }
-
-    public String getPath() {
-        return dicomFile.getPath();
-    }
-
-    public Type getType() {
-        return type;
     }
 }

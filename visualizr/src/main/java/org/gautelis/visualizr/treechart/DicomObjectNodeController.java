@@ -1,32 +1,29 @@
 package org.gautelis.visualizr.treechart;
 
-import org.gautelis.visualizr.VisualizrGuiController;
-import org.gautelis.visualizr.model.DicomObject;
-import org.gautelis.visualizr.model.DicomTag;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.gautelis.visualizr.VisualizrGuiController;
+import org.gautelis.visualizr.model.DicomObject;
+import org.gautelis.visualizr.model.DicomTag;
 
 import java.net.URL;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
 /**
  * FXML Controller class
- *
  */
 public class DicomObjectNodeController implements Initializable {
     private static final Logger log = LogManager.getLogger(DicomObjectNodeController.class);
@@ -38,7 +35,7 @@ public class DicomObjectNodeController implements Initializable {
     public TitledPane titlePane;
 
     @FXML
-    public TableView tagsTable;
+    public TableView<DicomTag> tagsTable;
 
     private DicomObject dicomObject = null;
     private ObservableList<DicomTag> observableTags;
@@ -66,21 +63,13 @@ public class DicomObjectNodeController implements Initializable {
 
         titlePane.textProperty().bind(title);
 
-        tagsTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-                    dumpStructureToClipboard();
-                }
-            }
-        });
-
-        tagsTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
+        tagsTable.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                 dumpStructureToClipboard();
             }
         });
+
+        tagsTable.setOnKeyPressed(event -> dumpStructureToClipboard());
     }
 
     private void dumpStructureToClipboard() {
@@ -94,9 +83,8 @@ public class DicomObjectNodeController implements Initializable {
 
     /**
      *
-     *
      */
-    public void setDicomObject(DicomObject dicomObject){
+    public void setDicomObject(DicomObject dicomObject) {
         this.dicomObject = dicomObject;
 
         String titleText = dicomObject.getId();
@@ -113,12 +101,7 @@ public class DicomObjectNodeController implements Initializable {
 
         try {
             this.observableTags.addAll(dicomObject.getDicomTags());
-            Collections.sort(this.observableTags, new Comparator<DicomTag>(){
-                @Override
-                public int compare(DicomTag t, DicomTag t1) {
-                    return t.getId().compareTo(t1.getId());
-                }
-            });
+            this.observableTags.sort(Comparator.comparing(DicomTag::getId));
         } catch (Exception ex) {
             String info = "Could not observe loading of DICOM object: " + titleText;
             log.info(info, ex);
@@ -128,15 +111,12 @@ public class DicomObjectNodeController implements Initializable {
         }
     }
 
-    public void setParentController(final VisualizrGuiController controller){
-        tagsTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<DicomTag>() {
-            @Override
-            public void changed(ObservableValue observableObject, DicomTag oldSelection, DicomTag newSelection) {
+    public void setParentController(final VisualizrGuiController controller) {
+        tagsTable.getSelectionModel().selectedItemProperty().addListener((observableObject, oldSelection, newSelection) -> {
 
-                if (null != newSelection) {
-                    DicomTagPopup popup = new DicomTagPopup(controller);
-                    popup.show(newSelection);
-                }
+            if (null != newSelection) {
+                DicomTagPopup popup = new DicomTagPopup(controller);
+                popup.show(newSelection);
             }
         });
     }
