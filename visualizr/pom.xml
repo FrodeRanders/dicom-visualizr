@@ -18,7 +18,7 @@
     <repositories>
         <repository>
             <id>dcm4che.public</id>
-            <url>http://www.dcm4che.org/maven2</url>
+            <url>https://www.dcm4che.org/maven2</url>
         </repository>
     </repositories>
 
@@ -67,8 +67,7 @@
         <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-core</artifactId>
-            <version>5.20.0</version>
-        </dependency>
+       </dependency>
 
         <dependency>
             <groupId>org.openjfx</groupId>

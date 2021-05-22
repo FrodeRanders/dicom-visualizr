@@ -14,8 +14,9 @@
 
     <properties>
         <vopn.version>2.3</vopn.version>
-        <log4j.version>2.13.3</log4j.version>
+        <log4j.version>2.14.1</log4j.version>
         <axiom.version>1.2.22</axiom.version>
+	<dcm4che.version>5.23.3</dcm4che.version>
     </properties>
 
     <prerequisites>
@@ -70,19 +71,25 @@
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-controls</artifactId>
-                <version>13</version>
-            </dependency>
+                <version>17-ea+11</version> <!-- 13 -->
+           </dependency>
 
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-fxml</artifactId>
-                <version>13.0.1</version>
+                <version>17-ea+11</version> <!-- 13.0.1 -->
+            </dependency>
+
+            <dependency>
+                <groupId>org.dcm4che</groupId>
+                <artifactId>dcm4che-core</artifactId>
+                <version>${dcm4che.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>4.13.2</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
